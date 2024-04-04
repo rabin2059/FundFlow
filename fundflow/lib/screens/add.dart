@@ -164,78 +164,124 @@ class _AddFundState extends State<AddFund> {
                 color: Color(0xFF01BA76),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Container(
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Expenses',
-                          style: GoogleFonts.roboto(
-                              textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)
-                          ),),
-                        Text('Rs.5,500',
-                          style: GoogleFonts.roboto(
-                              textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color.fromARGB(255, 205, 38, 26))
-                          ),)
-                      ],
-                    ),
-                    Container(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: data.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 236, 220, 220),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Expenses',
+                        style: GoogleFonts.roboto(
+                            textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)
+                        ),),
+                      Text('Rs.5,500',
+                        style: GoogleFonts.roboto(
+                            textStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color.fromARGB(255, 205, 38, 26))
+                        ),)
+                    ],
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 236, 220, 220),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        '${data[index].allocationName}',
-                                        style: GoogleFonts.poppins(
-                                          textStyle: TextStyle(fontSize:15, fontWeight: FontWeight.w800),
-                                        ),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${data[index].allocationName}',
+                                            style: GoogleFonts.poppins(
+                                              textStyle: TextStyle(fontSize:15, fontWeight: FontWeight.w800),
+                                            ),
+                                          ),
+                                          Text(
+                                            'Rs.${data[index].allocatedAmount}',
+                                            style: GoogleFonts.poppins(
+                                              textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        'Rs.${data[index].allocatedAmount}',
-                                        style: GoogleFonts.poppins(
-                                          textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                                        ),
-                                      ),
+                                      Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(context,
+                                                MaterialPageRoute(builder: (context) => UpdateItems(item: data[index], getData: getData,),
+                                                ),
+                                              );
+                                            },
+                                            child: Icon(CupertinoIcons.pen)),
+                                          SizedBox(width:20),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              // Show confirmation dialog
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text("Confirm Deletion"),
+                                                    content: Text("Are you sure you want to delete this item?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          // Dismiss the dialog
+                                                          Navigator.pop(context);
+                                                        },
+                                                        child: Text("No"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          try {
+                                                            // Call the method to delete the item
+                                                            await _addItemController.deleteItem(data[index].id);
+
+                                                            // Refresh the data after deletion
+                                                            getData();
+
+                                                            // Dismiss the dialog
+                                                            Navigator.pop(context);
+                                                          } catch (e) {
+                                                            print('Failed to delete item: $e');
+                                                          }
+                                                        },
+                                                        child: Text("Yes"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Icon(CupertinoIcons.delete, color: Color.fromARGB(255, 0, 0, 0))
+                                          ),
+                                        ],
+                                      )
                                     ],
                                   ),
-                                  Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(context,
-                                          MaterialPageRoute(builder: (context) => UpdateItems(item: data[index]),
-                                          ),);
-                                        },
-                                        child: Icon(CupertinoIcons.pen)),
-                                      SizedBox(width:20),
-                                      Icon(CupertinoIcons.delete, color: Color.fromARGB(255, 0, 0, 0)),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           )

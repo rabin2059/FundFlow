@@ -1,22 +1,45 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:fundflow/screens/history.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fundflow/controller/AddItemController.dart';
+import 'package:fundflow/models/AddItemModel.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 class ReportScreen extends StatefulWidget {
   final String username;
-  const ReportScreen({super.key, required this.username});
+  const ReportScreen({Key? key, required this.username}) : super(key: key);
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
 
-class _ReportScreenState extends State<ReportScreen> {
+class _ReportScreenState extends State<ReportScreen>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: Duration(seconds: 3),
+    vsync: this,
+  )..repeat();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  final colorList = <Color>[
+    const Color(0xff2485F4),
+    const Color(0xffF44336),
+    const Color(0xff4CAF50),
+    const Color(0xffFF9800),
+    const Color(0xff009688),
+    const Color(0xff795548),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    AddItemController _itemController =
+        AddItemController(username: widget.username);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 199, 199, 199),
       body: Column(
@@ -40,7 +63,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hi Rabin',
+                        'Hi ${widget.username}',
                         style: GoogleFonts.roboto(
                             textStyle:
                                 TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
@@ -218,31 +241,35 @@ class _ReportScreenState extends State<ReportScreen> {
                   ),
                   Container(
                     height: 250,
-                    child: PieChart(
-                      PieChartData(
-                        sections: [
-                          PieChartSectionData(
-                            value: 20,
-                            color: Colors.greenAccent
-                          ),
-                          PieChartSectionData(
-                            value: 30,
-                            color: Colors.lightBlue
-                          ),
-                          PieChartSectionData(
-                            value: 60,
-                            color: Colors.yellow
-                          ),
-                          PieChartSectionData(
-                            value: 40,
-                            color: Colors.orange
-                          ),
-                          PieChartSectionData(
-                            value: 200,
-                            color: Colors.red
-                          ),
-                        ]
-                      )
+                    child: FutureBuilder<List<AddItemModel>>(
+                      future: _itemController.getAllItems(),
+                      builder: (context, AsyncSnapshot<List<AddItemModel>> snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: SpinKitFadingCircle(
+                              color: Colors.amber,
+                              size: 50,
+                              controller: _controller,
+                            ),
+                          );
+                        } else {
+                          final List<AddItemModel> items = snapshot.data!;
+                          Map<String, double> dataMap = {};
+                          for (var item in items) {
+                            dataMap[item.allocationName] = item.allocatedAmount.toDouble();
+                          }
+                          return PieChart(
+                            dataMap: dataMap,
+                            chartRadius: 160,
+                            legendOptions: LegendOptions(
+                              legendPosition: LegendPosition.left,
+                            ),
+                            animationDuration: const Duration(milliseconds: 1200),
+                            chartType: ChartType.ring,
+                            colorList: colorList,
+                          );
+                        }
+                      },
                     ),
                   )
                 ],

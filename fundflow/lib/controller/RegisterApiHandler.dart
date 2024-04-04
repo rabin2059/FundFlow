@@ -18,8 +18,6 @@ class RegisterApiHandler {
       }),
     );
 
-    print(response.statusCode );
-
     if (response.statusCode >= 200 && response.statusCode <= 299) {
       return 'Registration successful';
     } else {
@@ -46,8 +44,6 @@ class RegisterApiHandler {
           'passwordHash': password,
         }),
       );
-
-      print(response.statusCode);
 
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         // Parse the response body as JSON

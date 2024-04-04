@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fundflow/controller/AddItemController.dart';
 import 'package:fundflow/models/AddItemModel.dart';
@@ -6,8 +7,9 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class UpdateItems extends StatefulWidget {
   final AddItemModel item;
+  final Function getData;
 
-  const UpdateItems({Key? key, required this.item}) : super(key: key);
+  const UpdateItems({Key? key, required this.item, required this.getData}) : super(key: key);
 
   @override
   _UpdateItemsState createState() => _UpdateItemsState();
@@ -22,7 +24,6 @@ class _UpdateItemsState extends State<UpdateItems> {
     if (_formKey.currentState!.saveAndValidate()) {
       final data = _formKey.currentState!.value;
 
-      // Convert allocatedAmount to double
       double allocatedAmount = double.tryParse(data['allocatedAmount']) ?? 0.0;
 
       final updatedItem = AddItemModel(
@@ -35,25 +36,30 @@ class _UpdateItemsState extends State<UpdateItems> {
       // Call the method to update the item
       await _addItemController.updateItem(updatedItem);
 
-      // Navigate back
-      Navigator.pop(context);
+      // Navigate back and refresh data after a delay
+      Timer(Duration(seconds: 1), () {
+        Navigator.pop(context);
+        // getData from add.dart file
+        widget.getData();
+      });
     }
   }
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? widget.item.allocatedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: _selectedDate ?? widget.item.allocatedDate,
+    firstDate: DateTime(2000),
+    lastDate: DateTime(2101),
+  );
 
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
+  if (pickedDate != null && pickedDate != _selectedDate) {
+    setState(() {
+      _selectedDate = pickedDate;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +91,6 @@ class _UpdateItemsState extends State<UpdateItems> {
                 decoration: InputDecoration(
                   labelText: 'Fund Allocation Name',
                 ),
-                // validator: FormBuilderValidators.required(context),
               ),
               SizedBox(height: 20),
               FormBuilderTextField(
@@ -96,7 +101,6 @@ class _UpdateItemsState extends State<UpdateItems> {
                 decoration: InputDecoration(
                   labelText: 'Allocation Amount',
                 ),
-                // validator: FormBuilderValidators.required(context),
               ),
               SizedBox(height: 20),
               InkWell(

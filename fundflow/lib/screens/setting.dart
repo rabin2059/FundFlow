@@ -27,7 +27,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 Icon(CupertinoIcons.person_crop_circle,
                 size: 60,),
                 SizedBox(width: 10,),
-                Text('Rabin Rai',
+                Text('${widget.username}',
                 style: GoogleFonts.roboto(
                   textStyle: TextStyle(
                     fontSize: 25,

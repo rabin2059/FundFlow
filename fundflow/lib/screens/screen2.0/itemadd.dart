@@ -42,12 +42,7 @@ class _AddItemsState extends State<AddItems> {
 
       if (response == "Added successfully") {
         _showSnackBar("Item added successfully");
-        // Navigate to another screen after successful item addition
-        // For example:
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => NextScreen()),
-        // );
+        
       } else {
         _showSnackBar(response);
       }
@@ -108,7 +103,7 @@ class _AddItemsState extends State<AddItems> {
                 TextField(
                   controller: _allocationNameController,
                   decoration: InputDecoration(
-                    labelText: 'Fund Allocation Name',
+                    labelText: 'Expenses Name',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -122,7 +117,7 @@ class _AddItemsState extends State<AddItems> {
                   controller: _allocatedAmountController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: 'Allocation Amount',
+                    labelText: 'Expenses Amount',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
@@ -136,7 +131,7 @@ class _AddItemsState extends State<AddItems> {
                   onTap: () => _selectDate(context),
                   child: InputDecorator(
                     decoration: InputDecoration(
-                      labelText: 'Allocated Date',
+                      labelText: 'Expensed Date',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -149,7 +144,7 @@ class _AddItemsState extends State<AddItems> {
                       children: <Widget>[
                         Text(
                           _selectedDate == null
-                              ? 'Select Date'
+                              ? 'Expended date'
                               : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
                         ),
                         Icon(Icons.arrow_drop_down),

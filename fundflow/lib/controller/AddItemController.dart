@@ -22,8 +22,6 @@ class AddItemController {
         }),
       );
 
-      print(response.statusCode);
-
       if (response.statusCode >= 200 && response.statusCode <= 300) {
         return 'Added successfully';
       } else if (response.statusCode == 400) {
@@ -36,24 +34,26 @@ class AddItemController {
     }
   }
 
-  Future<dynamic> deleteItem(String allocationName) async {
-    try {
-      final response = await http.delete(
-        Uri.parse('$baseUri/RemoveFund?username=$username&allocationName=$allocationName'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-      );
+ Future<dynamic> deleteItem(int id) async {
+  try {
+    final response = await http.delete(
+      Uri.parse('$baseUri/RemoveFund?Id=$id'), // Update URI to accept Id instead of allocationName
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
 
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to delete item. Server returned ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Failed to delete item: $e');
+    print(response.statusCode);
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return 'Deleted';
+    } else {
+      throw Exception('Failed to delete item. Server returned ${response.statusCode}');
     }
+  } catch (e) {
+    throw Exception('Failed to delete item: $e');
   }
+}
 
   Future<dynamic> updateItem(AddItemModel updatedItem) async {
   try {
@@ -84,8 +84,6 @@ class AddItemController {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-
-      print(response.statusCode);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final List<dynamic> jsonData = jsonDecode(response.body);

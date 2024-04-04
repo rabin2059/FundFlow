@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Hi Rabin',
+                        'Hi ${widget.username}',
                         style: GoogleFonts.roboto(
                             textStyle:
                                 TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
